@@ -20,7 +20,7 @@ function Navbar() {
     <nav className="fixed top-0 w-full z-50 bg-brand-navy/90 backdrop-blur-md border-b border-white/5">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#" className="text-lg font-bold text-white tracking-tight">
-          Dr. Kelvin Brown<span className="text-brand-teal">, MD</span>
+          Dr. Kelvin Brown<span className="text-brand-teal">, MD, MPH</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((l) => (
@@ -133,7 +133,7 @@ function About() {
             </h2>
             <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
-                I'm a board-eligible physician, surgeon, and public health expert with an unwavering belief:
+                I'm a physician, surgeon, and public health expert with an unwavering belief:
                 every person deserves ownership of their health data and access to quality care —
                 regardless of where they live, who they work for, or what they can afford.
               </p>

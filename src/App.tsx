@@ -1,9 +1,9 @@
 import {
   Menu, X, ArrowRight, ExternalLink, Mail, MapPin, BookOpen,
   Stethoscope, Code2, Heart, Trophy, Users, Lightbulb, ChevronRight,
-  Linkedin, Instagram, Globe, Activity, Dumbbell,
+  Linkedin, Instagram, Globe, Activity,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const NAV_LINKS = [
   { label: "About", href: "#about" },
@@ -413,6 +413,18 @@ function Books() {
 }
 
 function RunClub() {
+  const widgetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!widgetRef.current) return;
+    const script = document.createElement("script");
+    script.src = "https://syncosystem.com/widget/run-club-widget.js";
+    script.setAttribute("data-slug", "running-with-precision");
+    script.async = true;
+    widgetRef.current.appendChild(script);
+    return () => { if (widgetRef.current) widgetRef.current.innerHTML = ""; };
+  }, []);
+
   return (
     <section id="runclub" className="bg-slate-50 py-24">
       <div className="max-w-6xl mx-auto px-6">
@@ -436,14 +448,7 @@ function RunClub() {
               others to find their stride. Running teaches discipline, consistency,
               and the power of showing up — the same principles that drive everything I do.
             </p>
-            <a
-              href="https://precisionhealthandweightloss.com/running-with-precision/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-brand-navy text-white font-semibold px-6 py-3 rounded-lg hover:bg-brand-navy/90 transition-colors"
-            >
-              <Dumbbell className="h-4 w-4" /> Join the Run Club
-            </a>
+            <div ref={widgetRef} />
           </div>
 
           <div className="space-y-4">

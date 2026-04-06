@@ -3,7 +3,7 @@ import {
   Stethoscope, Code2, Heart, Trophy, Users, Lightbulb, ChevronRight,
   Linkedin, Instagram, Globe, Activity,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
   { label: "About", href: "#about" },
@@ -412,19 +412,55 @@ function Books() {
   );
 }
 
-function RunClub() {
-  const widgetRef = useRef<HTMLDivElement>(null);
+function RunClubWidget() {
+  const [club, setClub] = useState<any>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!widgetRef.current) return;
-    const script = document.createElement("script");
-    script.src = "https://syncosystem.com/widget/run-club-widget.js";
-    script.setAttribute("data-slug", "running-with-precision");
-    script.async = true;
-    widgetRef.current.appendChild(script);
-    return () => { if (widgetRef.current) widgetRef.current.innerHTML = ""; };
+    fetch("https://api.syncosystem.com/api/run-club/public/running-with-precision")
+      .then((r) => r.json())
+      .then((json) => { if (!json.success) throw new Error(); setClub(json.data); })
+      .catch(() => setError(true));
   }, []);
 
+  if (error) return <p style={{ color: "#94a3b8", fontSize: 14 }}>Unable to load club info.</p>;
+  if (!club) return <p style={{ color: "#94a3b8", fontSize: 14 }}>Loading...</p>;
+
+  const color = /^#[0-9a-fA-F]{3,6}$/.test(club.primaryColor) ? club.primaryColor : "#2563eb";
+
+  return (
+    <div style={{ border: "1px solid #e2e8f0", borderRadius: 16, padding: 24, background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", maxWidth: 400 }}>
+      <h3 style={{ textAlign: "center", fontWeight: 700, fontSize: 18, margin: "0 0 4px" }}>{club.name}</h3>
+      {club.location && <p style={{ textAlign: "center", fontSize: 13, color: "#64748b", margin: 0 }}>{club.location}</p>}
+      <p style={{ textAlign: "center", fontSize: 13, color: "#64748b", margin: "8px 0 0" }}>Growing fast — join today</p>
+      {club.nextEvent && (
+        <div style={{ background: "#f8fafc", borderRadius: 12, padding: 12, margin: "12px 0" }}>
+          <p style={{ fontWeight: 600, fontSize: 14, margin: "0 0 4px" }}>{club.nextEvent.title}</p>
+          <p style={{ fontSize: 13, color: "#64748b", margin: 0 }}>
+            {new Date(club.nextEvent.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" })} at {club.nextEvent.startTime}
+            {club.nextEvent.location ? ` — ${club.nextEvent.location}` : ""}
+          </p>
+        </div>
+      )}
+      <a
+        href="https://syncosystem.com/run-club/running-with-precision/join"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ display: "block", textAlign: "center", background: color, color: "#fff", padding: 12, borderRadius: 10, textDecoration: "none", fontWeight: 600, fontSize: 14, marginTop: 12 }}
+      >
+        Join {club.name}
+      </a>
+      <p style={{ textAlign: "center", fontSize: 11, color: "#94a3b8", margin: "12px 0 0" }}>
+        Powered by{" "}
+        <a href="https://syncosystem.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none" }}>
+          SyncoSystem
+        </a>
+      </p>
+    </div>
+  );
+}
+
+function RunClub() {
   return (
     <section id="runclub" className="bg-slate-50 py-24">
       <div className="max-w-6xl mx-auto px-6">
@@ -448,7 +484,7 @@ function RunClub() {
               others to find their stride. Running teaches discipline, consistency,
               and the power of showing up — the same principles that drive everything I do.
             </p>
-            <div ref={widgetRef} />
+            <RunClubWidget />
           </div>
 
           <div className="space-y-4">

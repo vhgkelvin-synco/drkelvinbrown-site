@@ -4,6 +4,9 @@ import {
   Linkedin, Instagram, Globe, Activity,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import EnterpriseDemo from "./EnterpriseDemo";
+import AtlantaChapter from "./AtlantaChapter";
 
 const NAV_LINKS = [
   { label: "About", href: "#about" },
@@ -448,6 +451,12 @@ function RunClub() {
               and the power of showing up — the same principles that drive everything I do.
             </p>
             <div id="syncosystem-rc-widget" ref={divRef} data-slug="running-with-precision" />
+            <Link
+              to="/syncosystem-run-global"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal hover:underline mt-6"
+            >
+              See the Enterprise Demo: Syncosystem Run Global <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
           <div className="space-y-4">
@@ -666,7 +675,7 @@ function Footer() {
   );
 }
 
-export default function App() {
+function HomePage() {
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -680,5 +689,15 @@ export default function App() {
       <Contact />
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/syncosystem-run-global" element={<EnterpriseDemo />} />
+      <Route path="/syncosystem-run-global/atlanta" element={<AtlantaChapter />} />
+    </Routes>
   );
 }

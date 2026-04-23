@@ -1,20 +1,24 @@
 import {
-  Menu, X, ArrowRight, ExternalLink, Mail, MapPin, BookOpen,
+  Menu, X, ArrowRight, ArrowUpRight, ExternalLink, Mail, MapPin, BookOpen,
   Stethoscope, Code2, Heart, Trophy, Users, Lightbulb, ChevronRight,
-  Linkedin, Instagram, Globe, Activity,
+  Linkedin, Instagram, Globe, Activity, Calendar, Clock,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import EnterpriseDemo from "./EnterpriseDemo";
 import AtlantaChapter from "./AtlantaChapter";
+import BlogHubPage from "./BlogHubPage";
+import { blogAggregate, type AggregatedArticle } from "./generated/blog-aggregate";
 
-const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Ventures", href: "#ventures" },
-  { label: "Books", href: "#books" },
-  { label: "Run Club", href: "#runclub" },
-  { label: "Speaking", href: "#speaking" },
-  { label: "Contact", href: "#contact" },
+type NavLink = { label: string } & ({ hash: string; to?: never } | { to: string; hash?: never });
+const NAV_LINKS: NavLink[] = [
+  { label: "About", hash: "#about" },
+  { label: "Ventures", hash: "#ventures" },
+  { label: "Books", hash: "#books" },
+  { label: "Run Club", hash: "#runclub" },
+  { label: "Blog", to: "/blog" },
+  { label: "Speaking", hash: "#speaking" },
+  { label: "Contact", hash: "#contact" },
 ];
 
 function Navbar() {
@@ -26,11 +30,25 @@ function Navbar() {
           Dr. Kelvin Brown<span className="text-brand-teal">, MD, MPH</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-slate-300 hover:text-white transition-colors">
-              {l.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((l) =>
+            l.to ? (
+              <Link
+                key={l.label}
+                to={l.to}
+                className="text-sm text-brand-teal hover:text-white transition-colors font-semibold"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.label}
+                href={l.hash}
+                className="text-sm text-slate-300 hover:text-white transition-colors"
+              >
+                {l.label}
+              </a>
+            ),
+          )}
           <a
             href="https://www.linkedin.com/in/drkelvinbrown"
             target="_blank"
@@ -46,16 +64,27 @@ function Navbar() {
       </div>
       {open && (
         <div className="md:hidden bg-brand-navy border-t border-white/5 px-6 pb-6 pt-4 space-y-4">
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="block text-slate-300 hover:text-white transition-colors"
-              onClick={() => setOpen(false)}
-            >
-              {l.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((l) =>
+            l.to ? (
+              <Link
+                key={l.label}
+                to={l.to}
+                className="block text-brand-teal hover:text-white transition-colors font-semibold"
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.label}
+                href={l.hash}
+                className="block text-slate-300 hover:text-white transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </a>
+            ),
+          )}
         </div>
       )}
     </nav>
@@ -647,6 +676,143 @@ function Contact() {
   );
 }
 
+function formatDate(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
+function TeaserCard({
+  article,
+  accent,
+  readLabel,
+}: {
+  article: AggregatedArticle | null;
+  accent: "teal" | "gold";
+  readLabel: string;
+}) {
+  if (!article) {
+    return (
+      <div className="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+        <BookOpen className="h-10 w-10 text-slate-300 mb-3" />
+        <p className="text-sm text-slate-500">New articles coming soon.</p>
+      </div>
+    );
+  }
+  const accentClass =
+    accent === "teal"
+      ? "text-brand-teal group-hover:text-brand-teal"
+      : "text-brand-gold group-hover:text-brand-gold";
+  return (
+    <a
+      href={article.canonicalUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-brand-teal/30 transition-all flex flex-col"
+    >
+      {article.heroImage ? (
+        <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+          <img
+            src={article.heroImage}
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+          />
+        </div>
+      ) : (
+        <div className="aspect-[16/9] bg-gradient-to-br from-brand-navy via-brand-blue/30 to-brand-teal/20" />
+      )}
+      <div className="p-7 flex flex-col flex-grow">
+        {article.category && (
+          <span className={`text-xs font-semibold uppercase tracking-wide mb-2 ${accentClass}`}>
+            {article.category}
+          </span>
+        )}
+        <h3 className="font-bold text-brand-navy text-lg leading-snug mb-3">{article.title}</h3>
+        {article.excerpt && (
+          <p className="text-sm text-slate-600 leading-relaxed mb-5 line-clamp-3">{article.excerpt}</p>
+        )}
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            {article.date && (
+              <span className="inline-flex items-center gap-1">
+                <Calendar className="h-3 w-3" /> {formatDate(article.date)}
+              </span>
+            )}
+            {article.readTime && (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="h-3 w-3" /> {article.readTime}
+              </span>
+            )}
+          </div>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-teal">
+            {readLabel} <ArrowUpRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function BlogTeaser() {
+  const precisionLatest = blogAggregate.sources["precision-health"].articles[0] ?? null;
+  const syncoLatest = blogAggregate.sources.syncosystem.articles[0] ?? null;
+
+  return (
+    <section id="articles" className="bg-white py-24 border-t border-slate-100">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px w-12 bg-brand-gold" />
+            <span className="text-brand-gold text-sm font-semibold uppercase tracking-widest">
+              Articles & Insights
+            </span>
+            <div className="h-px w-12 bg-brand-gold" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-navy mb-4">
+            Latest from my two companies
+          </h2>
+          <p className="text-slate-600 max-w-2xl mx-auto">
+            New writing on medicine and technology — published on Precision Health and SyncoSystem, and
+            curated here.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="space-y-5">
+            <TeaserCard article={precisionLatest} accent="teal" readLabel="Read on Precision Health" />
+            <Link
+              to="/blog#precision-articles"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal hover:underline"
+            >
+              View all Precision Health articles <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="space-y-5">
+            <TeaserCard article={syncoLatest} accent="gold" readLabel="Read on SyncoSystem" />
+            <Link
+              to="/blog#syncosystem-articles"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal hover:underline"
+            >
+              View all SyncoSystem articles <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="text-center mt-12">
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 bg-brand-navy text-white font-semibold px-6 py-3 rounded-lg hover:bg-brand-blue transition-colors"
+          >
+            Visit the full blog hub <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-brand-navy border-t border-white/5 py-12">
@@ -687,6 +853,7 @@ function HomePage() {
       <RunClub />
       <Speaking />
       <Contact />
+      <BlogTeaser />
       <Footer />
     </div>
   );
@@ -696,6 +863,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/blog" element={<BlogHubPage />} />
       <Route path="/syncosystem-run-global" element={<EnterpriseDemo />} />
       <Route path="/syncosystem-run-global/atlanta" element={<AtlantaChapter />} />
     </Routes>

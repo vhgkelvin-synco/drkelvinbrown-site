@@ -1,0 +1,65 @@
+name: Deploy to Vercel
+
+# Rebuilds and deploys drkelvinbrown.com to Vercel production when:
+#  1) A dispatch event is sent from the SyncoSystem or Precision Health repos
+#     (their blog source files changed), so the aggregated blog hub picks up
+#     fresh articles.
+#  2) A commit is pushed to main in this repo.
+#  3) A weekly cron runs as a safety-net in case a dispatch is missed.
+#
+# Required repository secrets:
+#   VERCEL_TOKEN      - Personal token from https://vercel.com/account/tokens
+#   VERCEL_ORG_ID     - team_AJHgJuG9iHyFbCSUbVxg7Mof
+#   VERCEL_PROJECT_ID - prj_jC2heXvn5yKyXmF4oBQ5imwtuD6v
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [blog-source-updated]
+  schedule:
+    # Weekly rebuild Monday 12:00 UTC — safety-net if dispatch misses.
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-drkelvinbrown
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & deploy to Vercel production
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log dispatch payload (if any)
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo "Triggered by: ${{ github.event.client_payload.source || 'unknown' }}"
+          echo "Reason: ${{ github.event.client_payload.reason || 'blog-source-updated' }}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel environment (production)
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build for Vercel
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy prebuilt output
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

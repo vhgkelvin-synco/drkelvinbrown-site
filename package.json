@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "fetch:blog-aggregate": "node scripts/fetch-blog-aggregate.mjs",
+    "predev": "npm run fetch:blog-aggregate",
     "dev": "vite",
+    "prebuild": "npm run fetch:blog-aggregate",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },

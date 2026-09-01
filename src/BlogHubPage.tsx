@@ -53,7 +53,7 @@ function Navbar() {
             ),
           )}
           <a
-            href="https://www.linkedin.com/in/drkelvinbrown"
+            href="https://www.linkedin.com/in/kelvinbrown/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-brand-teal text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-teal/90 transition-colors"

@@ -10,6 +10,11 @@ import AtlantaChapter from "./AtlantaChapter";
 import BlogHubPage from "./BlogHubPage";
 import { blogAggregate, type AggregatedArticle } from "./generated/blog-aggregate";
 
+const LINKEDIN_URL = "https://www.linkedin.com/in/kelvinbrown/";
+const YOUTUBE_EMBED_URL = "https://www.youtube-nocookie.com/embed/u390gDfAD7M";
+const RUN_CLUB_EMBED_URL = "https://syncosystem.com/run-club/running-with-precision?embed=true";
+const RUN_CLUB_FALLBACK_URL = "https://www.precisionhealthandweightloss.com/community/run-club";
+
 type NavLink = { label: string } & ({ hash: string; to?: never } | { to: string; hash?: never });
 const NAV_LINKS: NavLink[] = [
   { label: "About", hash: "#about" },
@@ -50,7 +55,7 @@ function Navbar() {
             ),
           )}
           <a
-            href="https://www.linkedin.com/in/drkelvinbrown"
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-brand-teal text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-teal/90 transition-colors"
@@ -99,50 +104,63 @@ function Hero() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-gold/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-3xl">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-brand-gold" />
-            <span className="text-brand-gold text-sm font-semibold uppercase tracking-widest">
-              Physician &middot; Founder &middot; Visionary
-            </span>
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px w-12 bg-brand-gold" />
+              <span className="text-brand-gold text-sm font-semibold uppercase tracking-widest">
+                Physician &middot; Founder &middot; Visionary
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-[1.08] mb-6">
+              Building the future of{" "}
+              <span className="text-gradient">health ownership</span>{" "}
+              through medicine & technology.
+            </h1>
+
+            <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mb-10">
+              I'm Dr. Kelvin Brown — a physician, surgeon, public health expert, marathoner,
+              and the founder of{" "}
+              <a href="https://syncosystem.com" target="_blank" rel="noopener noreferrer" className="text-brand-teal hover:underline font-medium">
+                SyncoSystem
+              </a>
+              , a health technology platform that puts people in control of their medical records.
+              For over 23 years, I've been on a mission to improve health outcomes — one patient, one community, one innovation at a time.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="#ventures"
+                className="inline-flex items-center gap-2 bg-brand-teal text-white font-semibold px-6 py-3 rounded-lg hover:bg-brand-teal/90 transition-colors"
+              >
+                Explore My Work <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-6 py-3 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                Get in Touch <Mail className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="flex flex-wrap gap-x-8 gap-y-3 mt-14 text-sm text-slate-400">
+              <div className="flex items-center gap-2"><Stethoscope className="h-4 w-4 text-brand-teal" /> Licensed Physician & Surgeon</div>
+              <div className="flex items-center gap-2"><Code2 className="h-4 w-4 text-brand-teal" /> Health Tech Founder & CEO</div>
+              <div className="flex items-center gap-2"><Trophy className="h-4 w-4 text-brand-teal" /> Marathoner & Run Club Leader</div>
+              <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand-teal" /> Published Author</div>
+            </div>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.08] mb-6">
-            Building the future of{" "}
-            <span className="text-gradient">health ownership</span>{" "}
-            through medicine & technology.
-          </h1>
-
-          <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mb-10">
-            I'm Dr. Kelvin Brown — a physician, surgeon, public health expert, marathoner,
-            and the founder of{" "}
-            <a href="https://syncosystem.com" target="_blank" rel="noopener noreferrer" className="text-brand-teal hover:underline font-medium">
-              SyncoSystem
-            </a>
-            , a health technology platform that puts people in control of their medical records.
-            For over 23 years, I've been on a mission to improve health outcomes — one patient, one community, one innovation at a time.
-          </p>
-
-          <div className="flex flex-wrap gap-4">
-            <a
-              href="#ventures"
-              className="inline-flex items-center gap-2 bg-brand-teal text-white font-semibold px-6 py-3 rounded-lg hover:bg-brand-teal/90 transition-colors"
-            >
-              Explore My Work <ArrowRight className="h-4 w-4" />
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-6 py-3 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              Get in Touch <Mail className="h-4 w-4" />
-            </a>
-          </div>
-
-          <div className="flex flex-wrap gap-x-8 gap-y-3 mt-14 text-sm text-slate-400">
-            <div className="flex items-center gap-2"><Stethoscope className="h-4 w-4 text-brand-teal" /> Licensed Physician & Surgeon</div>
-            <div className="flex items-center gap-2"><Code2 className="h-4 w-4 text-brand-teal" /> Health Tech Founder & CEO</div>
-            <div className="flex items-center gap-2"><Trophy className="h-4 w-4 text-brand-teal" /> Marathoner & Run Club Leader</div>
-            <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand-teal" /> Published Author</div>
+          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+            <div className="absolute -inset-4 bg-brand-teal/10 rounded-[2rem] blur-2xl" aria-hidden />
+            <img
+              src="/images/dr-brown-hero-blazer.jpg"
+              alt="Dr. Kelvin Brown, MD, MPH, physician, founder, and health-tech visionary"
+              width={682}
+              height={1024}
+              className="relative w-full aspect-[2/3] object-cover object-top rounded-3xl border border-white/10 shadow-2xl"
+            />
           </div>
         </div>
       </div>
@@ -154,7 +172,14 @@ function About() {
   return (
     <section id="about" className="bg-white py-24">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-[minmax(0,280px)_1fr] gap-10 lg:gap-16 items-start mb-16">
+          <img
+            src="/images/dr-brown-about-clinical.jpg"
+            alt="Dr. Kelvin Brown preparing for care at Precision Health"
+            width={683}
+            height={1024}
+            className="w-full aspect-[3/4] object-cover object-top rounded-3xl border border-slate-100 shadow-lg"
+          />
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px w-12 bg-brand-gold" />
@@ -185,42 +210,42 @@ function About() {
               </p>
             </div>
           </div>
+        </div>
 
-          <div className="space-y-4">
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-              <h3 className="font-bold text-brand-navy mb-4 text-lg">Education & Training</h3>
-              <div className="space-y-3">
-                {[
-                  { degree: "M.D.", school: "University of Alabama at Birmingham (UASOM)" },
-                  { degree: "M.P.H.", school: "Emory University — Epidemiology & Health Policy" },
-                  { degree: "B.S.", school: "Christian Brothers University — Biology, Chemistry, Psychology" },
-                  { degree: "Residency", school: "General Surgery — Emory University Hospitals" },
-                ].map((ed) => (
-                  <div key={ed.degree} className="flex gap-4">
-                    <span className="text-brand-teal font-bold text-sm w-24 shrink-0">{ed.degree}</span>
-                    <span className="text-slate-600 text-sm">{ed.school}</span>
-                  </div>
-                ))}
-              </div>
+        <div className="grid md:grid-cols-2 gap-8 items-start">
+          <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+            <h3 className="font-bold text-brand-navy mb-4 text-lg">Education & Training</h3>
+            <div className="space-y-3">
+              {[
+                { degree: "M.D.", school: "University of Alabama at Birmingham (UASOM)" },
+                { degree: "M.P.H.", school: "Emory University — Epidemiology & Health Policy" },
+                { degree: "B.S.", school: "Christian Brothers University — Biology, Chemistry, Psychology" },
+                { degree: "Residency", school: "General Surgery — Emory University Hospitals" },
+              ].map((ed) => (
+                <div key={ed.degree} className="flex gap-4">
+                  <span className="text-brand-teal font-bold text-sm w-24 shrink-0">{ed.degree}</span>
+                  <span className="text-slate-600 text-sm">{ed.school}</span>
+                </div>
+              ))}
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-brand-navy rounded-2xl p-6 text-center">
-                <p className="text-3xl font-black text-brand-teal">23+</p>
-                <p className="text-sm text-slate-300 mt-1">Years in Medicine</p>
-              </div>
-              <div className="bg-brand-navy rounded-2xl p-6 text-center">
-                <p className="text-3xl font-black text-brand-teal">1000s</p>
-                <p className="text-sm text-slate-300 mt-1">Patients Served</p>
-              </div>
-              <div className="bg-brand-navy rounded-2xl p-6 text-center">
-                <p className="text-3xl font-black text-brand-teal">2</p>
-                <p className="text-sm text-slate-300 mt-1">Published Books</p>
-              </div>
-              <div className="bg-brand-navy rounded-2xl p-6 text-center">
-                <p className="text-3xl font-black text-brand-teal">6</p>
-                <p className="text-sm text-slate-300 mt-1">World Marathon Majors Goal</p>
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-brand-navy rounded-2xl p-6 text-center">
+              <p className="text-3xl font-black text-brand-teal">23+</p>
+              <p className="text-sm text-slate-300 mt-1">Years in Medicine</p>
+            </div>
+            <div className="bg-brand-navy rounded-2xl p-6 text-center">
+              <p className="text-3xl font-black text-brand-teal">1000s</p>
+              <p className="text-sm text-slate-300 mt-1">Patients Served</p>
+            </div>
+            <div className="bg-brand-navy rounded-2xl p-6 text-center">
+              <p className="text-3xl font-black text-brand-teal">2</p>
+              <p className="text-sm text-slate-300 mt-1">Published Books</p>
+            </div>
+            <div className="bg-brand-navy rounded-2xl p-6 text-center">
+              <p className="text-3xl font-black text-brand-teal">6</p>
+              <p className="text-sm text-slate-300 mt-1">World Marathon Majors Goal</p>
             </div>
           </div>
         </div>
@@ -445,15 +470,16 @@ function Books() {
 }
 
 function RunClub() {
-  const divRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    if (!divRef.current) return;
-    const script = document.createElement("script");
-    script.src = "https://syncosystem.com/widget/run-club-widget.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { script.remove(); };
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "syncosystem-embed-height" && iframeRef.current) {
+        iframeRef.current.style.height = `${e.data.height}px`;
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
   }, []);
 
   return (
@@ -479,10 +505,9 @@ function RunClub() {
               others to find their stride. Running teaches discipline, consistency,
               and the power of showing up — the same principles that drive everything I do.
             </p>
-            <div id="syncosystem-rc-widget" ref={divRef} data-slug="running-with-precision" />
             <Link
               to="/syncosystem-run-global"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal hover:underline mt-6"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal hover:underline"
             >
               See the Enterprise Demo: Syncosystem Run Global <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -510,6 +535,29 @@ function RunClub() {
             })}
           </div>
         </div>
+
+        <div className="mt-16 rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
+          <iframe
+            ref={iframeRef}
+            src={RUN_CLUB_EMBED_URL}
+            width="100%"
+            height="900"
+            style={{ border: "none", display: "block", minHeight: 600 }}
+            allow="clipboard-write"
+            title="Running with Precision Club Hub"
+          />
+        </div>
+        <p className="text-center text-sm text-slate-500 mt-4">
+          Prefer to open it on Precision Health?{" "}
+          <a
+            href={RUN_CLUB_FALLBACK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-teal font-semibold hover:underline"
+          >
+            Visit the Running with Precision page
+          </a>
+        </p>
       </div>
     </section>
   );
@@ -526,7 +574,7 @@ function Speaking() {
           <div className="h-px w-12 bg-brand-gold" />
         </div>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-          Available for speaking, panels, and media.
+          Watch, speak, and join the conversation.
         </h2>
         <p className="text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
           I speak on the intersection of healthcare, technology, and entrepreneurship — from
@@ -534,6 +582,16 @@ function Speaking() {
           physician entrepreneurship, and building health equity through community. If you're
           organizing an event, podcast, or panel, I'd love to contribute.
         </p>
+
+        <div className="max-w-3xl mx-auto mb-10 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black aspect-video">
+          <iframe
+            src={YOUTUBE_EMBED_URL}
+            title="Dr. Kelvin Brown"
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-10">
           {[
@@ -606,19 +664,19 @@ function Contact() {
                 <div>
                   <p className="font-semibold text-brand-navy text-sm">LinkedIn</p>
                   <a
-                    href="https://www.linkedin.com/in/drkelvinbrown"
+                    href={LINKEDIN_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-brand-teal hover:underline"
                   >
-                    linkedin.com/in/drkelvinbrown
+                    linkedin.com/in/kelvinbrown
                   </a>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-4 mt-8">
-              <a href="https://www.linkedin.com/in/drkelvinbrown" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-brand-navy flex items-center justify-center hover:bg-brand-blue transition-colors" aria-label="LinkedIn">
+              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-brand-navy flex items-center justify-center hover:bg-brand-blue transition-colors" aria-label="LinkedIn">
                 <Linkedin className="h-4 w-4 text-white" />
               </a>
               <a href="https://www.instagram.com/drkelvinbrown" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-brand-navy flex items-center justify-center hover:bg-brand-blue transition-colors" aria-label="Instagram">
@@ -829,7 +887,7 @@ function Footer() {
           <div className="flex flex-wrap gap-6 text-sm text-slate-400">
             <a href="https://syncosystem.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SyncoSystem</a>
             <a href="https://www.precisionhealthandweightloss.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Precision Health</a>
-            <a href="https://www.linkedin.com/in/drkelvinbrown" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
+            <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
             <a href="https://www.instagram.com/drkelvinbrown" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
           </div>
         </div>

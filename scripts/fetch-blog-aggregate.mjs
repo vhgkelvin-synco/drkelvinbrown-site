@@ -34,8 +34,14 @@ function isFilePath(urlOrPath) {
   );
 }
 
+const SOURCE_BASES = {
+  syncosystem: "https://syncosystem.com",
+  "precision-health": "https://precisionhealthandweightloss.com",
+};
+
 async function loadIndex(source) {
   const src = source.url;
+  const fallbackBase = SOURCE_BASES[source.key] ?? "";
   try {
     let data;
     if (isFilePath(src)) {
@@ -46,20 +52,29 @@ async function loadIndex(source) {
       const res = await fetch(src, { headers: { Accept: "application/json" } });
       if (!res.ok) {
         console.warn(`[blog-aggregate] ${source.key} HTTP ${res.status} at ${src}`);
-        return { ok: false, articles: [] };
+        return { ok: false, articles: [], canonicalBase: fallbackBase };
       }
       data = await res.json();
     }
     const articles = Array.isArray(data?.articles) ? data.articles : [];
+    const canonicalBase = String(data?.canonicalBase ?? fallbackBase).replace(/\/$/, "");
     console.log(`[blog-aggregate] ${source.key}: ${articles.length} articles`);
-    return { ok: true, articles, generatedAt: data?.generatedAt ?? null };
+    return { ok: true, articles, generatedAt: data?.generatedAt ?? null, canonicalBase };
   } catch (err) {
     console.warn(`[blog-aggregate] ${source.key} load failed:`, err?.message ?? err);
-    return { ok: false, articles: [] };
+    return { ok: false, articles: [], canonicalBase: fallbackBase };
   }
 }
 
-function normalize(article, source) {
+function absoluteAssetUrl(url, canonicalBase) {
+  if (!url) return null;
+  const value = String(url);
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("/") && canonicalBase) return `${canonicalBase}${value}`;
+  return value;
+}
+
+function normalize(article, source, canonicalBase) {
   return {
     slug: String(article.slug ?? ""),
     title: String(article.title ?? ""),
@@ -68,7 +83,7 @@ function normalize(article, source) {
     category: article.category ? String(article.category) : null,
     excerpt: article.excerpt ? String(article.excerpt) : "",
     readTime: article.readTime ? String(article.readTime) : null,
-    heroImage: article.heroImage ? String(article.heroImage) : null,
+    heroImage: absoluteAssetUrl(article.heroImage, canonicalBase),
     canonicalUrl: String(article.canonicalUrl ?? ""),
     source,
   };
@@ -78,8 +93,12 @@ async function main() {
   const results = await Promise.all(SOURCES.map(loadIndex));
   const [synco, precision] = results;
 
-  const syncoArticles = synco.articles.map((a) => normalize(a, "syncosystem"));
-  const precisionArticles = precision.articles.map((a) => normalize(a, "precision-health"));
+  const syncoArticles = synco.articles.map((a) =>
+    normalize(a, "syncosystem", synco.canonicalBase),
+  );
+  const precisionArticles = precision.articles.map((a) =>
+    normalize(a, "precision-health", precision.canonicalBase),
+  );
 
   const sortByDateDesc = (a, b) => {
     const da = a.date ? new Date(a.date).getTime() : 0;

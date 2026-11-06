@@ -8,6 +8,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import EnterpriseDemo from "./EnterpriseDemo";
 import AtlantaChapter from "./AtlantaChapter";
 import BlogHubPage from "./BlogHubPage";
+import RunnerBiomarkers from "./RunnerBiomarkers";
 import { blogAggregate, type AggregatedArticle } from "./generated/blog-aggregate";
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/kelvinbrown/";
@@ -21,6 +22,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Ventures", hash: "#ventures" },
   { label: "Books", hash: "#books" },
   { label: "Run Club", hash: "#runclub" },
+  { label: "Runner Labs", to: "/runner-biomarkers" },
   { label: "Blog", to: "/blog" },
   { label: "Speaking", hash: "#speaking" },
   { label: "Contact", hash: "#contact" },
@@ -536,6 +538,30 @@ function RunClub() {
           </div>
         </div>
 
+        <div className="mt-16 grid md:grid-cols-[280px_1fr] gap-8 items-center rounded-2xl bg-brand-navy p-6 md:p-8 text-white">
+          <img
+            src="/images/runner-biomarkers/runner-biomarkers-square-1080.jpg"
+            alt="Biomarkers for Runner Preparation, $129 all-inclusive"
+            width={1080}
+            height={1080}
+            className="w-full rounded-xl"
+          />
+          <div>
+            <span className="text-brand-gold text-sm font-semibold uppercase tracking-widest">Doctor Marathoner series</span>
+            <h3 className="mt-2 text-2xl md:text-3xl font-bold">Biomarkers for Runner Preparation</h3>
+            <p className="mt-3 text-slate-300 leading-relaxed">
+              Know more before you train. Prepare smarter before race day. A $129 all-inclusive Comprehensive Metabolic Panel
+              plus hs-CRP, drawn at a Quest location near you: electrolytes, kidney function, CO2 buffering, protein, and inflammation.
+            </p>
+            <Link
+              to="/runner-biomarkers"
+              className="mt-5 inline-flex items-center gap-2 bg-brand-teal text-white text-sm font-semibold px-5 py-3 rounded-lg hover:bg-brand-teal/90"
+            >
+              See what it tells a runner <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
         <div className="mt-16 rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
           <iframe
             ref={iframeRef}
@@ -922,6 +948,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/blog" element={<BlogHubPage />} />
+      <Route path="/runner-biomarkers" element={<RunnerBiomarkers />} />
       <Route path="/syncosystem-run-global" element={<EnterpriseDemo />} />
       <Route path="/syncosystem-run-global/atlanta" element={<AtlantaChapter />} />
     </Routes>

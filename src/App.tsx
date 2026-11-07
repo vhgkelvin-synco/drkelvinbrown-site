@@ -14,12 +14,14 @@ import { blogAggregate, type AggregatedArticle } from "./generated/blog-aggregat
 const LINKEDIN_URL = "https://www.linkedin.com/in/kelvinbrown/";
 const YOUTUBE_EMBED_URL = "https://www.youtube-nocookie.com/embed/u390gDfAD7M";
 const RUN_CLUB_EMBED_URL = "https://syncosystem.com/run-club/running-with-precision?embed=true";
+const ASK_DR_BROWN_EMBED_URL = "https://syncosystem.com/embed/ask-dr-brown?brand=dkb";
 const RUN_CLUB_FALLBACK_URL = "https://www.precisionhealthandweightloss.com/community/run-club";
 
 type NavLink = { label: string } & ({ hash: string; to?: never } | { to: string; hash?: never });
 const NAV_LINKS: NavLink[] = [
   { label: "About", hash: "#about" },
   { label: "Ventures", hash: "#ventures" },
+  { label: "Ask Dr. Brown", hash: "#ask" },
   { label: "Books", hash: "#books" },
   { label: "Run Club", hash: "#runclub" },
   { label: "Runner Labs", to: "/runner-biomarkers" },
@@ -471,12 +473,62 @@ function Books() {
   );
 }
 
+function AskDrBrown() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "syncosystem-embed-height" && iframeRef.current && e.source === iframeRef.current.contentWindow) {
+        iframeRef.current.style.height = `${e.data.height}px`;
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
+  return (
+    <section id="ask" className="bg-brand-navy py-24 relative overflow-hidden">
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-brand-gold/10 rounded-full blur-3xl" />
+      <div className="relative max-w-6xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px w-12 bg-brand-gold" />
+            <span className="text-brand-gold text-sm font-semibold uppercase tracking-widest">Ask the Author</span>
+            <div className="h-px w-12 bg-brand-gold" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Ask me about weight. Get answers from my book.</h2>
+          <p className="text-slate-300 leading-relaxed mt-4">
+            I wrote <span className="italic text-white">The Anatomy of Obesity</span> after years in the operating room
+            and the weight loss clinic. Ask a question and get an answer drawn only
+            from those pages, with the chapter and page cited so you can read it yourself.
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6 text-xs text-slate-400">
+            <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-brand-gold" /> Answers from one source: my book</span>
+            <span className="inline-flex items-center gap-1.5"><Stethoscope className="h-3.5 w-3.5 text-brand-gold" /> Educational, not medical advice</span>
+          </div>
+        </div>
+
+        <iframe
+          ref={iframeRef}
+          src={ASK_DR_BROWN_EMBED_URL}
+          title="Ask Dr. Kelvin Brown about The Anatomy of Obesity"
+          width="100%"
+          height="760"
+          loading="lazy"
+          style={{ border: "none", display: "block", minHeight: 520, background: "transparent" }}
+          className="max-w-3xl mx-auto"
+        />
+      </div>
+    </section>
+  );
+}
+
 function RunClub() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      if (e.data?.type === "syncosystem-embed-height" && iframeRef.current) {
+      if (e.data?.type === "syncosystem-embed-height" && iframeRef.current && e.source === iframeRef.current.contentWindow) {
         iframeRef.current.style.height = `${e.data.height}px`;
       }
     };
@@ -933,6 +985,7 @@ function HomePage() {
       <About />
       <Ventures />
       <SyncoHighlight />
+      <AskDrBrown />
       <Books />
       <RunClub />
       <Speaking />
